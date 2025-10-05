@@ -1,5 +1,5 @@
 # ------------------------------
-# Template Matplotlib
+# Template
 # ------------------------------
 
 # Bibliotheken importieren
