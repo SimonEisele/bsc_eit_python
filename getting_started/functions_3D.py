@@ -45,7 +45,13 @@ for x, y, z in zip(x1_vals, y1_vals, z1_vals):
 # ------------------------------
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(X2, Y2, Z2, cmap='viridis')
+ax.plot_surface(
+    X2, Y2, Z2,
+    cmap='viridis',
+    edgecolor='grey',
+    linewidth=0.1,
+    rstride=1,
+    cstride=1)
 ax.set_title("3D-Plot Matplotlib")
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
