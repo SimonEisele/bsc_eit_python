@@ -61,10 +61,10 @@ def plotVectors():
     ax.set_zlabel('Z')
 
     # Limits
-    max_range = max(np.linalg.norm(a), np.linalg.norm(b)) + 1
-    ax.set_xlim([0, max_range])
-    ax.set_ylim([0, max_range])
-    ax.set_zlim([0, max_range])
+    max_val = max(np.max(np.abs(a)), np.max(np.abs(b))) + 1
+    ax.set_xlim([-max_val, max_val])
+    ax.set_ylim([-max_val, max_val])
+    ax.set_zlim([-max_val, max_val])
 
     # Legende und Titel
     ax.legend()
