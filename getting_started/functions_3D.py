@@ -7,44 +7,52 @@ from tkinter.filedialog import asksaveasfilename
 # ------------------------------
 # 1. Funktion definieren
 # ------------------------------
-def f(x):
-    return 5 * np.cos(2 * np.pi * x) * np.exp(-x)
+def f(x, y):
+    return np.sin(x**2-y**2)
 
 
 # ------------------------------
-# 2. x-Werte definieren (Einzelne Werte)
+# 2. x- und y-Werte definieren (Einzelne Werte)
 # ------------------------------
-x1_vals = np.array([1, 1.1, 1.2, 1.3, 1.4, 1.5])
+x1_vals = np.array([-1, 0, 1, 2, 3])
+y1_vals = np.array([0, 1, 2, 3, 4,])
 
 # ------------------------------
-# 2. x-Werte definieren (Werte linear verteilt über Bereich)
+# 2. x- und y-Werte definieren (Werte linear verteilt über Bereich)
 # ------------------------------
-x2_vals = np.linspace(0, 2 * np.pi, 100)  # 100 Punkte zwischen 0 und 2pi
+x2_vals = np.linspace(-2, 2, 40)  # 40 Punkte zwischen -2 und 2
+y2_vals = np.linspace(-1, 3, 40)  # 40 Punkte zwischen -1 und 3
 
 # ------------------------------
-# 3. y-Werte berechnen
+# 3. 2D-Gitter erstellen (Für plot)
 # ------------------------------
-y1_vals = f(x1_vals)
-y2_vals = f(x2_vals)
+X2, Y2 = np.meshgrid(x2_vals, y2_vals)
 
 # ------------------------------
-# 4. Funktionswerte der einzeln bestimmten x-Werten ausgeben
+# 4. y-Werte berechnen
 # ------------------------------
-for x, y in zip(x1_vals, y1_vals):
-    print(f"x = {x:.2f}, f(x) = {y:.2f}")
+z1_vals = f(x1_vals, y1_vals)
+Z2 = f(X2, Y2)
 
 # ------------------------------
-# 5. 2D-Plot erstellen
+# 5. Funktionswerte der einzeln bestimmten x- und y-Werten ausgeben
 # ------------------------------
-plt.plot(x2_vals, y2_vals, label=r'$f(x) = 5 \cos(2\pi x) e^{-x}$')
-plt.xlabel('x')
-plt.ylabel('f(x)')
-plt.title('Funktionswerte')
-plt.grid(True)
-plt.legend()
+for x, y, z in zip(x1_vals, y1_vals, z1_vals):
+    print(f"x = {x:.2f}, y = {y:.2f}, f(x, y) = {z:.2f}")
 
 # ------------------------------
-# 6. Plot als PNG speichern
+# 6. 3D-Plot erstellen
+# ------------------------------
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_surface(X2, Y2, Z2, cmap='viridis')
+ax.set_title("3D-Plot Matplotlib")
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+
+# ------------------------------
+# 7. Plot als PNG speichern
 # ------------------------------
 root = Tk()
 root.withdraw()  # Hauptfenster von Tkinter ausblenden
