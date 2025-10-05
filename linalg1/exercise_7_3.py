@@ -1,86 +1,106 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import messagebox
 
 
 # ------------------------------
-# 1. Funktion definieren
+# 1. Funktion: Zwischenwinkel berechnen
 # ------------------------------
-def zwischenwinkel(a, b, deg=False):
-    """
-    Berechnet den Zwischenwinkel zwischen zwei Vektoren a und b.
-
-    Parameter:
-        a, b : list oder np.array
-            Vektoren (beliebige Dimension)
-        deg : bool
-            True -> Winkel in Grad, False -> Winkel in Radiant
-
-    Rückgabe:
-        Winkel zwischen a und b
-    """
+def getZwischenwinkel(a, b, deg=False):
     a = np.array(a)
     b = np.array(b)
-
-    # Skalarprodukt und Normen
-    dot_product = np.dot(a, b)
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-
-    # cos(theta)
-    cos_theta = dot_product / (norm_a * norm_b)
-
-    # numerische Stabilität: cos_theta in [-1,1] begrenzen
+    cos_theta = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
     cos_theta = np.clip(cos_theta, -1.0, 1.0)
-
-    # Winkel berechnen
     theta = np.arccos(cos_theta)
-
     if deg:
         theta = np.degrees(theta)
-
     return theta
 
 
-# ------------------------
-# 2. Funktion aufrufen mit zwei Vektoren
-# ------------------------
-a = [100, 6, 3]
-b = [10, 9, 2]
+# ------------------------------
+# 2. Funktion: Vektoren plotten und Winkel anzeigen
+# ------------------------------
+def plotVectors():
+    try:
+        # Vektoren aus GUI einlesen
+        a = [float(entry_a_x.get()), float(entry_a_y.get()),
+             float(entry_a_z.get())]
+        b = [float(entry_b_x.get()), float(entry_b_y.get()),
+             float(entry_b_z.get())]
+    except ValueError:
+        messagebox.showerror("Fehler", "Bitte gültige Zahlen eingeben!")
+        return
 
-winkel_rad = zwischenwinkel(a, b)
-winkel_deg = zwischenwinkel(a, b, deg=True)
+    # Winkel berechnen
+    winkel_rad = getZwischenwinkel(a, b)
+    winkel_deg = getZwischenwinkel(a, b, deg=True)
 
-print(f"Winkel in Radiant: {winkel_rad:.4f}")
-print(f"Winkel in Grad: {winkel_deg:.2f}")
+    messagebox.showinfo("Zwischenwinkel",
+                        f"Winkel in Radiant: {winkel_rad:.4f} rad\n"
+                        f"Winkel in Grad: {winkel_deg:.2f}°\n")
 
-# ------------------------
-# 3. 3D-Plot erstellen
-# ------------------------
-fig = plt.figure(figsize=(7, 7))
-ax = fig.add_subplot(111, projection='3d')
+    # ------------------------
+    # 3D-Plot erstellen
+    # ------------------------
+    fig = plt.figure(figsize=(7, 7))
+    ax = fig.add_subplot(111, projection='3d')
 
-# Pfeile vom Ursprung
-ax.quiver(0, 0, 0, a[0], a[1], a[2], color='blue', linewidth=2,
-          arrow_length_ratio=0.1)
-ax.quiver(0, 0, 0, b[0], b[1], b[2], color='red', linewidth=2,
-          arrow_length_ratio=0.1)
+    # Pfeile vom Ursprung
+    ax.quiver(0, 0, 0, a[0], a[1], a[2], color='blue', linewidth=2,
+              arrow_length_ratio=0.1, label='a')
+    ax.quiver(0, 0, 0, b[0], b[1], b[2], color='red', linewidth=2,
+              arrow_length_ratio=0.1, label='b')
 
-# Ursprung
-ax.scatter(0, 0, 0, color='black', s=20)
+    # Ursprung
+    ax.scatter(0, 0, 0, color='black', s=20)
 
-# Achsenbeschriftung
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Z')
+    # Achsenbeschriftung
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
 
-# Limits (automatisch passend)
-max_range = max(np.linalg.norm(a), np.linalg.norm(b)) + 1
-ax.set_xlim([0, max_range])
-ax.set_ylim([0, max_range])
-ax.set_zlim([0, max_range])
+    # Limits
+    max_range = max(np.linalg.norm(a), np.linalg.norm(b)) + 1
+    ax.set_xlim([0, max_range])
+    ax.set_ylim([0, max_range])
+    ax.set_zlim([0, max_range])
 
-# Legende und Titel
-ax.legend()
-ax.set_title(f"3D Vektoren, Winkel: {winkel_deg:.1f}°")
+    # Legende und Titel
+    ax.legend()
+    ax.set_title(f"3D Vektoren, Winkel: {winkel_deg:.1f}°")
 
-plt.show()
+    plt.show()
+
+
+# ------------------------------
+# 3. GUI aufbauen
+# ------------------------------
+root = tk.Tk()
+root.title("3D Vektoren und Zwischenwinkel")
+
+# Labels und Eingaben für Vektor A und B
+labels = ['x', 'y', 'z']
+tk.Label(root, text="Vektor A:").grid(row=0, column=0)
+entry_a_x = tk.Entry(root)
+entry_a_x.grid(row=0, column=1)
+entry_a_y = tk.Entry(root)
+entry_a_y.grid(row=0, column=2)
+entry_a_z = tk.Entry(root)
+entry_a_z.grid(row=0, column=3)
+
+tk.Label(root, text="Vektor B:").grid(row=1, column=0)
+entry_b_x = tk.Entry(root)
+entry_b_x.grid(row=1, column=1)
+entry_b_y = tk.Entry(root)
+entry_b_y.grid(row=1, column=2)
+entry_b_z = tk.Entry(root)
+entry_b_z.grid(row=1, column=3)
+
+# Button zum Plotten
+tk.Button(root, text="Zwischenwinkel berechnen",
+          command=plotVectors).grid(row=2,
+                                    column=0,
+                                    columnspan=4)
+
+root.mainloop()
